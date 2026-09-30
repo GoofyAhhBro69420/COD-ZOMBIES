@@ -34,10 +34,16 @@ jobs:
           python -m pip install --upgrade pip
           pip install Pillow
 
-      - name: Create py alias
+      - name: Create better py alias
         run: |
-          echo '#!/bin/bash' > /usr/local/bin/py
-          echo 'python "$@"' >> /usr/local/bin/py
+          cat > /usr/local/bin/py << 'EOF'
+          #!/bin/bash
+          # Ignore version flags like -3.11 and just run python
+          while [[ $1 == -* ]]; do
+            shift
+          done
+          exec python "$@"
+          EOF
           chmod +x /usr/local/bin/py
 
       - name: Install dependencies
